@@ -299,32 +299,48 @@ add_led_strip_animation("move_up_with_tail", {
     })
 
 
-def blink_all_setup(led_driver, attributes):
+def blink_setup(led_driver, attributes):
     if (attributes is None):
         attributes = {}
     start_from_off = attributes.get("start_from_off", True)
+    is_alternate = attributes.get("is_alternate", False)
     colors = attributes.get("colors", (200, 200, 200))
     # start setup
     cur_led_state = not start_from_off
-    led_driver.fill(colors if cur_led_state else (0, 0, 0))
+    if (is_alternate):
+        even_value = colors if cur_led_state else (0, 0, 0)
+        odd_value = (0, 0, 0) if cur_led_state else colors
+        for i in range(len(led_driver)):
+            led_driver[i] = even_value if i % 2 == 0 else odd_value
+    else:
+        led_driver.fill(colors if cur_led_state else (0, 0, 0))
     led_driver.write()
     state = {
         "cur_led_state" : cur_led_state,
+        "is_alternate": is_alternate,
         "colors": colors
         }
     return state
 
-def blink_all_next_step(led_driver, state):
+def blink_next_step(led_driver, state):
     cur_led_state = state.get("cur_led_state", True)
+    is_alternate = state.get("is_alternate", False)
     colors = state.get("colors", (200, 200, 200))
     # start next step
-    state["cur_led_state"] = not cur_led_state
-    led_driver.fill(colors if cur_led_state else (0, 0, 0))
+    cur_led_state = not cur_led_state
+    state["cur_led_state"] = cur_led_state
+    if (is_alternate):
+        even_value = colors if cur_led_state else (0, 0, 0)
+        odd_value = (0, 0, 0) if cur_led_state else colors
+        for i in range(len(led_driver)):
+            led_driver[i] = even_value if i % 2 == 0 else odd_value
+    else:
+        led_driver.fill(colors if cur_led_state else (0, 0, 0))
     led_driver.write()
     return state
 
-add_led_strip_animation("blink_all", {
-        "setup": blink_all_setup,
-        "next_step": blink_all_next_step
+add_led_strip_animation("blink", {
+        "setup": blink_setup,
+        "next_step": blink_next_step
     })
 

@@ -6,7 +6,7 @@ LED_STRIP_COUNT = 20
 # LED Strip Animation
 led_strip_seq = None
 animation_seq = [
-    ['blink_all', 5000],
+    ['blink', 5000],
     ['move_up_with_tail', 5000, {"speed": 50, "active_count": 1, "colors": (100, 100, 100)}],
     ['move_down_with_tail', 5000, {"speed": 50, "active_count": 1, "colors": (100, 100, 100)}],
     ['none', 5000, {"active_count": 1, "colors": (100, 100, 100)}],
