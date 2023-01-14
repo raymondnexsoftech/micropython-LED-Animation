@@ -299,6 +299,48 @@ add_led_strip_animation("move_up_with_tail", {
     })
 
 
+def fill_and_move_setup(led_driver, attributes):
+    if (attributes is None):
+        attributes = {}
+    direction = attributes.get("direction", None)
+    color_list = attributes.get("colors", (200, 200, 200))
+    if (not isinstance(color_list[0], (list, tuple))):
+        color_list = (color_list, )
+    # start setup
+    if len(color_list) > 1:
+        for i in range(len(led_driver)):
+            led_driver[i] = color_list[i % len(color_list)]
+    else:
+        led_driver.fill(color_list[0])
+    led_driver.write()
+    state = {
+        "direction" : direction,
+        }
+    return state
+
+def fill_and_move_next_step(led_driver, state):
+    direction = state.get("direction", None)
+    # start next step
+    if (direction == 'up'):
+        last_pos_value = led_driver[len(led_driver) - 1]
+        for i in reversed(range(len(led_driver))):
+            led_driver[led_driver.remap_led_index(i + 1)] = led_driver[i]
+        led_driver[0] = last_pos_value
+        led_driver.write()
+    elif (direction == 'down'):
+        pos_0_value = led_driver[0]
+        for i in range(len(led_driver)):
+            led_driver[i] = led_driver[led_driver.remap_led_index(i + 1)]
+        led_driver[len(led_driver) - 1] = pos_0_value
+        led_driver.write()
+    return state
+
+add_led_strip_animation("fill_and_move", {
+        "setup": fill_and_move_setup,
+        "next_step": fill_and_move_next_step
+    })
+
+
 def blink_setup(led_driver, attributes):
     if (attributes is None):
         attributes = {}
@@ -342,5 +384,66 @@ def blink_next_step(led_driver, state):
 add_led_strip_animation("blink", {
         "setup": blink_setup,
         "next_step": blink_next_step
+    })
+
+
+def breath_setup(led_driver, attributes):
+    if (attributes is None):
+        attributes = {}
+    start_from_off = attributes.get("start_from_off", True)
+    is_alternate = attributes.get("is_alternate", False)
+    step = attributes.get("step", 10)
+    if (step < 2):
+        step = 2
+    colors = attributes.get("colors", (200, 200, 200))
+    # start setup
+    is_glowing = start_from_off
+    if (is_alternate):
+        even_value = (0, 0, 0) if is_glowing else colors
+        odd_value = colors if is_glowing else (0, 0, 0)
+        for i in range(len(led_driver)):
+            led_driver[i] = even_value if i % 2 == 0 else odd_value
+    else:
+        led_driver.fill((0, 0, 0) if start_from_off else colors)
+    led_driver.write()
+    state = {
+        "is_glowing" : is_glowing,
+        "step": step,
+        "cur_step": 0 if is_glowing else step,
+        "is_alternate": is_alternate,
+        "colors": colors,
+        }
+    return state
+
+def breath_next_step(led_driver, state):
+    is_glowing = state.get("is_glowing", True)
+    step = state.get("step", 10)
+    cur_step = state.get("cur_step", 0)
+    is_alternate = state.get("is_alternate", False)
+    colors = state.get("colors", (200, 200, 200))
+    # start next step
+    if (is_glowing):
+        cur_step += 1
+        if (cur_step >= step):
+            cur_step = step
+            is_glowing = False
+    else:
+        cur_step -= 1
+        if (cur_step <= 0):
+            cur_step = 0
+            is_glowing = True
+    state["is_glowing"] = is_glowing
+    state["cur_step"] = cur_step
+    for i in range(len(led_driver)):
+        cur_led_ratio = cur_step if ((not is_alternate) or (i % 2 == 0)) else step - cur_step
+        led_driver[i] = (math.floor(colors[0] * cur_led_ratio / step),
+                         math.floor(colors[1] * cur_led_ratio / step),
+                         math.floor(colors[2] * cur_led_ratio / step))
+    led_driver.write()
+    return state
+
+add_led_strip_animation("breath", {
+        "setup": breath_setup,
+        "next_step": breath_next_step
     })
 
