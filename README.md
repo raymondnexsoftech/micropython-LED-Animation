@@ -5,7 +5,14 @@ MicroPython LED strip animation library
 - Default using "NeoPixel" as LED driver, but you can use you favourite driver with some callback to work
 - Able to add your customized animation
 - Can trigger animation events (animation next step, next animation) manually or using system loop
-
+  
+Currently supported animation for LED strip  
+(assume the strip is place horizontally and index 0 LED is at bottom):  
+- move_up_with_tail
+- move_down_with_tail
+- fill_and_move
+- blink
+- breath
 
 Installation
 ------------
