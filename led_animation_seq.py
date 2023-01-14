@@ -96,14 +96,17 @@ class LedStripAnimationSeq():
     def __init__(self, pin_number, led_count, animation_seq, led_class = None, led_class_callbacks = {}, manual_trigger_event = False, seq_callbacks = {}):
         self.led_driver = LedDriverWrapper(led_class, pin_number, led_count, led_class_callbacks)            
         self.led_count = led_count
-        self.animation_seq = animation_seq
         self.manual_trigger_event = manual_trigger_event
         self.seq_callbacks = seq_callbacks
-        self.animation_seq_step = 0
         self.animation = None
         self.next_action_time_ms = None
-        self.start_animation()
+        self.update_animation_seq(animation_seq)
     
+    def update_animation_seq(self, seq):
+        self.animation_seq = seq
+        self.animation_seq_step = 0
+        self.start_animation()        
+        
     # start next animation
     def next_animation(self):
         self.animation_seq_step += 1
