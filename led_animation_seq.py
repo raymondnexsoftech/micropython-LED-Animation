@@ -219,7 +219,7 @@ class LedStripAnimation():
 #####################################
 # Preset animation functions
 #####################################
-def move_left_with_tail_setup(led_driver, attributes):
+def move_down_with_tail_setup(led_driver, attributes):
     if (attributes is None):
         attributes = {}
     active_count = attributes.get("active_count", 1)
@@ -245,7 +245,7 @@ def move_left_with_tail_setup(led_driver, attributes):
             led_position = led_driver.remap_led_index(led_position + 1)
         led_driver.write()
 
-def move_left_with_tail_next_step(led_driver, state):
+def move_down_with_tail_next_step(led_driver, state):
     # start next step
     pos_0_value = led_driver[0]
     for i in range(len(led_driver)):
@@ -253,13 +253,13 @@ def move_left_with_tail_next_step(led_driver, state):
     led_driver[len(led_driver) - 1] = pos_0_value
     led_driver.write()
 
-add_led_strip_animation("move_left_with_tail", {
-        "setup": move_left_with_tail_setup,
-        "next_step": move_left_with_tail_next_step
+add_led_strip_animation("move_down_with_tail", {
+        "setup": move_down_with_tail_setup,
+        "next_step": move_down_with_tail_next_step
     })
 
 
-def move_right_with_tail_setup(led_driver, attributes):
+def move_up_with_tail_setup(led_driver, attributes):
     if (attributes is None):
         attributes = {}
     active_count = attributes.get("active_count", 1)
@@ -285,7 +285,7 @@ def move_right_with_tail_setup(led_driver, attributes):
             led_position = led_driver.remap_led_index(led_position - 1)
         led_driver.write()
 
-def move_right_with_tail_next_step(led_driver, state):
+def move_up_with_tail_next_step(led_driver, state):
     # start next step
     last_pos_value = led_driver[len(led_driver) - 1]
     for i in reversed(range(len(led_driver))):
@@ -293,9 +293,9 @@ def move_right_with_tail_next_step(led_driver, state):
     led_driver[0] = last_pos_value
     led_driver.write()
 
-add_led_strip_animation("move_right_with_tail", {
-        "setup": move_right_with_tail_setup,
-        "next_step": move_right_with_tail_next_step
+add_led_strip_animation("move_up_with_tail", {
+        "setup": move_up_with_tail_setup,
+        "next_step": move_up_with_tail_next_step
     })
 
 
