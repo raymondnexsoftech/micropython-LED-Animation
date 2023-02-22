@@ -11,7 +11,7 @@ def add_led_strip_animation(animation_name, callbacks, confirm_overwrite = False
         # don't add any animation if no name provided
         return False
     if (led_animation_mapping_callbacks.get(animation_name, None) is not None):
-        if (confirm_overwrite == false):
+        if (confirm_overwrite == False):
             # since the animation exist, if not confirm overwrite, stop saving to protect the old animation
             return False
     led_animation_mapping_callbacks[animation_name] = callbacks
